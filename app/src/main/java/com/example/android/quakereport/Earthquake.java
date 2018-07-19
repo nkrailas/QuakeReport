@@ -1,5 +1,7 @@
 package com.example.android.quakereport;
 
+import java.sql.Time;
+
 public class Earthquake {
 
     // Magnitude of earthquake
@@ -8,20 +10,20 @@ public class Earthquake {
     // Location of the earthquake
     private String Location;
 
-    // Date of earthquake
-    private String Date;
+    // Time of earthquake
+    private long TimeInMilliseconds;
 
 
     /* Create a new Earthquake object.
      * @param magnitude                    Magnitude of the earthquake
      * @param location                     Location of city experiencing the earthquake
-     * @param date                          Date of the earthquake
+     * @param timeInMilliseconds           Time of the earthquake
      */
 
-    public Earthquake(String magnitude, String location, String date) {
+    public Earthquake(String magnitude, String location, long timeInMilliseconds) {
         Magnitude = magnitude;
         Location = location;
-        Date = date;
+        TimeInMilliseconds = timeInMilliseconds;
     }
 
     // Get the magnitude of the earthquake
@@ -35,8 +37,8 @@ public class Earthquake {
     }
 
     // Get the date of the earthquake
-    public String getDate() {
-        return Date;
+    public long getTimeInMilliseconds() {
+        return TimeInMilliseconds;
     }
 }
 
