@@ -1,17 +1,23 @@
 package com.example.android.quakereport;
 
 import android.content.Context;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
+
+    // Split the original location string where the text "of" occurs, if present
+    // If no "of", then there is no location offset and use "near the"
+    private static final String LOCATION_SEPARATOR = " of ";
 
     /**
      * Create a custom constructor.
@@ -45,25 +51,52 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
             // Get the Earthquake object located at this position in the list
             Earthquake currentEarthquake = getItem(position);
 
-            // Find the TextView for the magnitude in earthquake_list_item.xml
+            // Find the TextView with view ID magnitude in earthquake_list_item.xml
             TextView magnitudeView = listItemView.findViewById(R.id.magnitude);
             magnitudeView.setText(currentEarthquake.getMagnitude());
 
-            // Find the TextView for the location in earthquake_list_item.xml
-            TextView locationView = listItemView.findViewById(R.id.location);
-            locationView.setText(currentEarthquake.getLocation());
+            // Get the original location String from the Earthquake object and store in a variable.
+            // Create two variables, one for location offset and one for primary location
+            String originalLocation = currentEarthquake.getLocation();
+            String locationOffset;
+            String primaryLocation;
+
+            // If original location contains "of," then split at parts before plus "of"
+            // into locationOffset and parts after into primaryLocation
+            if (originalLocation.contains(LOCATION_SEPARATOR)) {
+                String[] parts = originalLocation.split(LOCATION_SEPARATOR);
+                locationOffset = parts[0] + LOCATION_SEPARATOR;
+                primaryLocation = parts[1];
+
+                // If original location lacks "of," meaning the first part, then add "Near the"
+                // into locationOffset and parts after into primaryLocation
+            } else {
+                locationOffset = getContext().getString(R.string.near_the);
+                primaryLocation = originalLocation;
+
+            }
+
+            // Find the TextView with view ID location_offset in earthquake_list_item.xml
+            TextView locationOffsetView = listItemView.findViewById(R.id.location_offset);
+            // Display the location offset of the current earthquake in that TextView
+            locationOffsetView.setText(locationOffset);
+
+            // Find the TextView with view ID primary_location in earthquake_list_item.xml
+            TextView primaryLocationView = listItemView.findViewById(R.id.primary_location);
+            // Display the primary location of the current earthquake in that TextView
+            primaryLocationView.setText(primaryLocation);
 
             // Create a new Date object from the time in milliseconds of the earthquake
             Date dateObject = new Date(currentEarthquake.getTimeInMilliseconds());
 
-            // Find the TextView with view ID date
+            // Find the TextView with view ID date in earthquake_list_item.xml
             TextView dateView = listItemView.findViewById(R.id.date);
             // Format the date string (i.e. "Mar 3, 1984")
             String formattedDate = formatDate(dateObject);
             // Display the date of the current earthquake in that TextView
             dateView.setText(formattedDate);
 
-            // Find the TextView with view ID time
+            // Find the TextView with view ID time in earthquake_list_item.xml
             TextView timeView = listItemView.findViewById(R.id.time);
             // Format the time string (i.e. "3:00PM")
             String formattedTime = formatTime(dateObject);
