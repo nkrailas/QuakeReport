@@ -5,7 +5,7 @@ import java.sql.Time;
 public class Earthquake {
 
     // Magnitude of earthquake
-    private String Magnitude;
+    private double Magnitude;
 
     // Location of the earthquake
     private String Location;
@@ -20,14 +20,14 @@ public class Earthquake {
      * @param timeInMilliseconds           Time of the earthquake
      */
 
-    public Earthquake(String magnitude, String location, long timeInMilliseconds) {
+    public Earthquake(double magnitude, String location, long timeInMilliseconds) {
         Magnitude = magnitude;
         Location = location;
         TimeInMilliseconds = timeInMilliseconds;
     }
 
     // Get the magnitude of the earthquake
-    public String getMagnitude() {
+    public double getMagnitude() {
         return Magnitude;
     }
 
