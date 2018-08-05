@@ -15,7 +15,10 @@
  */
 package com.example.android.quakereport;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +31,11 @@ import java.util.List;
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
+import android.widget.TextView;
+
+import com.example.android.quakereport.Earthquake;
+import com.example.android.quakereport.EarthquakeAdapter;
+import com.example.android.quakereport.EarthquakeLoader;
 
 public class EarthquakeActivity extends AppCompatActivity implements LoaderCallbacks<List<Earthquake>> {
 
@@ -43,6 +51,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
     // Adapter for the list of earthquakes
     private EarthquakeAdapter eAdapter;
 
+    // TextView that is displayed when the list is empty
+    private TextView eEmptyStateTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +61,10 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
         // Find a reference to the ListView in the layout
         ListView earthquakeListView = findViewById(R.id.list);
+
+        // Set empty state TextView onto the ListView
+        eEmptyStateTextView = findViewById(R.id.empty_view);
+        earthquakeListView.setEmptyView(eEmptyStateTextView);
 
         // Create a new adapter that takes an EMPTY list of earthquakes as input
         eAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
@@ -76,14 +91,37 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
             }
         });
 
-        // Get a reference to the LoaderManager, in order to interact with loaders
-        LoaderManager loaderManager = getLoaderManager();
+        // Get a reference to the Connectivity Manager to check state of network connectivity
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
-        // the bundle. Pass in this activity for the LoaderCallbacks parameter.
-        loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
+        // Get details on the currently active default area network
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        // If there is a network connection, fetch data
+        if (networkInfo != null && networkInfo.isConnected()) {
+
+            // Get a reference to the LoaderManager, in order to interact with loaders.
+            LoaderManager loaderManager = getLoaderManager();
+
+            // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+            // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+            // because this activity implements the LoaderCallbacks interface).
+            loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
+        } else {
+            // Otherwise, display error
+            // First, hide loading indicator so error message will be visible
+            View loadingIndicator = findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.GONE);
+        }
+
+        // Update empty state with no connection error message
+        eEmptyStateTextView.setText(R.string.no_internet_connection);
+
+
 
     }
+
 
     @Override
     public Loader<List<Earthquake>> onCreateLoader(int i, Bundle bundle) {
@@ -94,6 +132,13 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes) {
+        // Hide loading indicator because the data has been loaded
+        View loadingIndicator = findViewById(R.id.loading_indicator);
+        loadingIndicator.setVisibility(View.GONE);
+
+        // Set empty state text to display "No earthquakes found."
+        eEmptyStateTextView.setText(R.string.no_earthquakes);
+
         // Clear the adapter of previous earthquake data
         eAdapter.clear();
 
