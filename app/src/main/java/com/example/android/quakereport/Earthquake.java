@@ -1,7 +1,5 @@
 package com.example.android.quakereport;
 
-import java.sql.Time;
-
 public class Earthquake {
 
     // Magnitude of earthquake
@@ -21,7 +19,7 @@ public class Earthquake {
      * @param magnitude                    Magnitude of the earthquake
      * @param location                     Location of city experiencing the earthquake
      * @param timeInMilliseconds           Time of the earthquake
-     * @ param url                         Url of webpage associated with earthquake
+     * @param url                          Url of webpage associated with earthquake
      */
 
     public Earthquake(double magnitude, String location, long timeInMilliseconds, String url) {

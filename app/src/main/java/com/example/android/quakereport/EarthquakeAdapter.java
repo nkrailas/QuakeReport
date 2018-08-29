@@ -39,12 +39,12 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
      * @param position    The position in the list of data to be displayed in list item view.
      * @param convertView The recycled view to populate.
      * @param parent      The parent ViewGroup that is used for inflation.
-     *                    return               The View for the position in the ListView.
+     *
      */
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Check is exiting view is being reused, otherwise inflate the view
+        // Check is existing view is being reused, otherwise inflate the view
         View listItemView = convertView;
         if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext()).inflate(
